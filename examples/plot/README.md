@@ -12,6 +12,7 @@ The payload data must be encapsulated in a JSON object, for example:
 The provided Python program `publish.py` can be used to send such JSON objects
 to the MQTT message broker.
 
+## Modules and Libraries
 Copy the `*.mod` files of DISLIN, json-fortran, and Eclipse Paho to
 `./include/`, for example:
 ```
@@ -41,6 +42,7 @@ libpaho-mqtt3c.so.1 -> libpaho-mqtt3c.so.1.3.0
 libpaho-mqtt3c.so.1.3.0
 ```
 
+## Build
 Run the `Makefile` to build the demo application:
 ```
 $ make
