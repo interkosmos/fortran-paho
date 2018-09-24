@@ -87,10 +87,19 @@ module paho_consts
     integer(kind=c_int), parameter :: MQTTCLIENT_BAD_STRUCTURE         = -8
     integer(kind=c_int), parameter :: MQTTCLIENT_BAD_QOS               = -9
     integer(kind=c_int), parameter :: MQTTCLIENT_SSL_NOT_SUPPORTED     = -10
+    integer(kind=c_int), parameter :: MQTTCLIENT_BAD_MQTT_VERSION      = -11
+    integer(kind=c_int), parameter :: MQTTCLIENT_BAD_PROTOCOL          = -14
+    integer(kind=c_int), parameter :: MQTTCLIENT_BAD_MQTT_OPTION       = -15
+    integer(kind=c_int), parameter :: MQTTCLIENT_WRONG_MQTT_VERSION    = -16
     integer(kind=c_int), parameter :: MQTTVERSION_DEFAULT              = 0
     integer(kind=c_int), parameter :: MQTTVERSION_3_1                  = 3
     integer(kind=c_int), parameter :: MQTTVERSION_3_1_1                = 4
+    integer(kind=c_int), parameter :: MQTTVERSION_5                    = 5
     integer(kind=c_int), parameter :: MQTT_BAD_SUBSCRIBE               = int(z'80')
+    integer(kind=c_int), parameter :: MQTT_SSL_VERSION_DEFAULT         = 0
+    integer(kind=c_int), parameter :: MQTT_SSL_VERSION_TLS_1_0         = 1
+    integer(kind=c_int), parameter :: MQTT_SSL_VERSION_TLS_1_1         = 2
+    integer(kind=c_int), parameter :: MQTT_SSL_VERSION_TLS_1_2         = 3
 
     ! MQTTClient_init_options_initializer
     type(mqtt_client_init_options), parameter :: MQTT_CLIENT_INIT_OPTIONS_INITIALIZER = &
