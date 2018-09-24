@@ -61,7 +61,7 @@ program main
     end if
 
     ! Subscribe to topic.
-    rc = mqtt_client_subscribe(client, TOPIC // c_null_char, QOS);
+    rc = mqtt_client_subscribe(client, TOPIC // c_null_char, QOS)
     print '(5a, i0, a)', 'Subscribing to topic "', TOPIC, '" for client "', &
                          CLIENT_ID, '" using QoS ', QOS, ' ...'
 
