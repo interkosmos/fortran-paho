@@ -17,7 +17,6 @@ program main
     character(len=*), parameter :: CLIENT_ID = 'FortranSubClient'
     character(len=*), parameter :: TOPIC     = 'fortran'
     integer,          parameter :: QOS       = 1
-    integer,          parameter :: TIMEOUT   = 10000
 
     type(c_ptr)                       :: client
     type(mqtt_client_connect_options) :: conn_opts = MQTT_CLIENT_CONNECT_OPTIONS_INITIALIZER

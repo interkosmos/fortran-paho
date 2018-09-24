@@ -4,7 +4,7 @@
 !
 ! Author:   Philipp Engel
 ! Licence:  ISC
-! Source:   https://bitbucket.org/interkosmos/f08paho/
+! Source:   https://github.com/interkosmos/f08paho/
 module paho_types
     use, intrinsic :: iso_c_binding
     implicit none
