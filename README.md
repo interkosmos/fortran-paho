@@ -65,7 +65,7 @@ or connect to `iot.eclipse.org` on port `1883`.
 
 Build the examples with:
 ```
-$ build <name>
+$ make <name>
 ```
 
 ## Licence
