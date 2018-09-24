@@ -1,7 +1,16 @@
 # Plot
 A demo application that uses
 [json-fortran](https://github.com/jacobwilliams/json-fortran/) and
-[DISLIN](http://www.mps.mpg.de/dislin/) to plot data in real-time.
+[DISLIN](http://www.mps.mpg.de/dislin/) to plot X-/Y-coordinates in real-time.
+The payload data must be encapsulated in a JSON object, for example:
+```
+{
+  "x": 10.0,
+  "y": 15.0
+}
+```
+The provided Python program `publish.py` can be used to send such JSON objects
+to the MQTT message broker.
 
 Copy the `*.mod` files of DISLIN, json-fortran, and Eclipse Paho to
 `./include/`, for example:
