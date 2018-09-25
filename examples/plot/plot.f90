@@ -143,7 +143,7 @@ program main
             logical                                :: found
             real(kind=dp)                          :: x, y
 
-            ! Get topic name and playload data.
+            ! Get topic name and payload data.
             tn = mqtt_client_topic_name(topic_name, len(TOPIC))
             pl = mqtt_client_payload(message)
 

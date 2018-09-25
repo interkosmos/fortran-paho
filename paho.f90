@@ -107,14 +107,11 @@ module paho_consts
 
     ! MQTTClient_connectOptions_initializer
     type(mqtt_client_connect_options), parameter :: MQTT_CLIENT_CONNECT_OPTIONS_INITIALIZER = &
-        mqtt_client_connect_options( &
-            ['M', 'Q', 'T', 'C'], 5, 60, 1, 1, c_null_ptr, c_null_ptr, c_null_ptr, 30, 20, c_null_ptr, 0, c_null_ptr, 0, &
-            returned_type(c_null_ptr, 0, 0), binary_pwd_type(0, c_null_ptr), -1, 0 &
-        )
+        mqtt_client_connect_options(['M', 'Q', 'T', 'C'], 5, 60, 1, 1, c_null_ptr, c_null_ptr, c_null_ptr, 30, 20, c_null_ptr, &
+                                    0, c_null_ptr, 0, returned_type(c_null_ptr, 0, 0), binary_pwd_type(0, c_null_ptr), -1, 0)
 
     ! MQTTProperties_initializer
-    type(mqtt_properties), parameter :: MQTT_PROPERTIES_INITIALIZER = &
-        mqtt_properties(0, 0, 0, c_null_ptr)
+    type(mqtt_properties), parameter :: MQTT_PROPERTIES_INITIALIZER = mqtt_properties(0, 0, 0, c_null_ptr)
 
     ! MQTTClient_message_initializer
     type(mqtt_client_message), parameter :: MQTT_CLIENT_MESSAGE_INITIALIZER  = &

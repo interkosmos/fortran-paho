@@ -2,7 +2,7 @@
 A demo application that uses
 [json-fortran](https://github.com/jacobwilliams/json-fortran/) and
 [DISLIN](http://www.mps.mpg.de/dislin/) to plot X-/Y-coordinates in real-time.
-The payload data must be encapsulated in a JSON object, for example:
+The values must be encapsulated in a JSON object, for example:
 ```
 {
   "x": 10.0,
