@@ -8,7 +8,7 @@ building and the Eclipse Paho C library for linking. Compilation has been tested
 with GNU Fortran 8, but should work with other modern compilers as well.
 
 ## Build Eclipse Paho
-If Eclipse Paho is not already installed, clone the GitHub
+If Eclipse Paho is not installed already, clone the GitHub
 [repository](https://github.com/eclipse/paho.mqtt.c) and build it from
 source:
 ```
@@ -21,16 +21,16 @@ $ make
 $ make install
 ```
 If you do not want to install Eclipse Paho globally with `make install`, copy
-`paho.mqtt.c` to you working directory. You then have to alter the `f08paho`
-Makefile and change the `CFLAGS` parameter to:
+`paho.mqtt.c` to you working directory (e.g., `f08paho/`). You then have to
+alter the `f08paho` Makefile and change the `CFLAGS` parameter to:
 ```
 CFLAGS = -Wall -std=2008 \
          -Wl,-rpath=/usr/local/lib/gcc8/ \
          -Wl,-rpath=./paho.mqtt.c/build/src/ \
          -I./paho.mqtt.c/src/ -L./paho.mqtt.c/build/src/
 ```
-The GCC runtime path `-Wl,-rpath=/usr/local/lib/gcc8/` is required only on
-FreeBSD.
+The GCC runtime path `-Wl,-rpath=/usr/local/lib/gcc8/` is required on FreeBSD
+only.
 
 ## Build the Fortran interface
 Clone the repository with Git and use GNU make to build the Fortran interface:

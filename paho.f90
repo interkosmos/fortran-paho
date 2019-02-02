@@ -243,58 +243,57 @@ module paho_utils
     public :: c_f_string_chars
     public :: mqtt_client_payload
     public :: mqtt_client_topic_name
+contains
+    pure subroutine c_f_string_chars(c_string, f_string)
+        !! Copies a C string, passed as a char-array reference,
+        !! to a Fortran string.
+        use, intrinsic :: iso_c_binding, only: c_char, c_null_char
+        implicit none
+        character(len=1, kind=c_char), intent(in)  :: c_string(:)
+        character(len=*),              intent(out) :: f_string
+        integer                                    :: i
 
-    contains
-        pure subroutine c_f_string_chars(c_string, f_string)
-            !! Copies a C string, passed as a char-array reference,
-            !! to a Fortran string.
-            use, intrinsic :: iso_c_binding, only: c_char, c_null_char
-            implicit none
-            character(len=1, kind=c_char), intent(in)  :: c_string(:)
-            character(len=*),              intent(out) :: f_string
-            integer                                    :: i
+        i = 1
 
-            i = 1
+        do while (c_string(i) /= c_null_char .and. i <= len(f_string))
+            f_string(i:i) = c_string(i)
+            i = i + 1
+        end do
 
-            do while (c_string(i) /= c_null_char .and. i <= len(f_string))
-                f_string(i:i) = c_string(i)
-                i = i + 1
-            end do
+        if (i < len(f_string)) &
+            f_string(i:) = ' '
+    end subroutine c_f_string_chars
 
-            if (i < len(f_string)) &
-                f_string(i:) = ' '
-        end subroutine c_f_string_chars
+    function mqtt_client_payload(ptr)
+        use, intrinsic :: iso_c_binding, only: c_char, c_ptr
+        use :: paho_types
+        type(c_ptr),               intent(in)  :: ptr
+        character(len=:),          allocatable :: mqtt_client_payload
+        type(mqtt_client_message), pointer     :: message_ptr
+        character(kind=c_char),    pointer     :: payload_ptrs(:)
 
-        function mqtt_client_payload(ptr)
-            use, intrinsic :: iso_c_binding, only: c_char, c_ptr
-            use :: paho_types
-            type(c_ptr),               intent(in)  :: ptr
-            character(len=:),          allocatable :: mqtt_client_payload
-            type(mqtt_client_message), pointer     :: message_ptr
-            character(kind=c_char),    pointer     :: payload_ptrs(:)
+        if (.not. c_associated(ptr)) &
+            return
 
-            if (.not. c_associated(ptr)) &
-                return
+        call c_f_pointer(ptr, message_ptr)
+        call c_f_pointer(message_ptr%payload, payload_ptrs, shape=[message_ptr%payload_len])
+        allocate (character(message_ptr%payload_len) :: mqtt_client_payload)
+        call c_f_string_chars(payload_ptrs, mqtt_client_payload)
+    end function mqtt_client_payload
 
-            call c_f_pointer(ptr, message_ptr)
-            call c_f_pointer(message_ptr%payload, payload_ptrs, shape=[message_ptr%payload_len])
-            allocate (character(message_ptr%payload_len) :: mqtt_client_payload)
-            call c_f_string_chars(payload_ptrs, mqtt_client_payload)
-        end function mqtt_client_payload
+    function mqtt_client_topic_name(ptr, length)
+        use, intrinsic :: iso_c_binding, only: c_char, c_ptr
+        type(c_ptr),            intent(in)  :: ptr
+        integer,                intent(in)  :: length
+        character(kind=c_char), pointer     :: topic_name_ptrs(:)
+        character(len=:),       allocatable :: mqtt_client_topic_name
 
-        function mqtt_client_topic_name(ptr, length)
-            use, intrinsic :: iso_c_binding, only: c_char, c_ptr
-            type(c_ptr),            intent(in)  :: ptr
-            integer,                intent(in)  :: length
-            character(kind=c_char), pointer     :: topic_name_ptrs(:)
-            character(len=:),       allocatable :: mqtt_client_topic_name
+        if (.not. c_associated(ptr)) &
+            return
 
-            if (.not. c_associated(ptr)) &
-                return
-
-            allocate (character(length) :: mqtt_client_topic_name)
-            call c_f_pointer(ptr, topic_name_ptrs, shape=[length])
-            call c_f_string_chars(topic_name_ptrs, mqtt_client_topic_name)
-            mqtt_client_topic_name = trim(mqtt_client_topic_name)
-        end function mqtt_client_topic_name
+        allocate (character(length) :: mqtt_client_topic_name)
+        call c_f_pointer(ptr, topic_name_ptrs, shape=[length])
+        call c_f_string_chars(topic_name_ptrs, mqtt_client_topic_name)
+        mqtt_client_topic_name = trim(mqtt_client_topic_name)
+    end function mqtt_client_topic_name
 end module paho_utils
