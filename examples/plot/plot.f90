@@ -7,12 +7,10 @@
 ! Licence:  ISC
 ! Source:   https://github.com/interkosmos/f08paho/
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_null_ptr, c_ptr
+    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_null_ptr, c_ptr
     use :: dislin
     use :: json_module
-    use :: paho_client
-    use :: paho_consts
-    use :: paho_types
+    use :: paho
     implicit none
 
     integer,          parameter :: dp         = selected_real_kind(15, 307)
@@ -21,16 +19,16 @@ program main
     character(len=*), parameter :: CLIENT_ID  = 'FortranClient'
     character(len=*), parameter :: TOPIC      = 'fortran'
     integer,          parameter :: QOS        = 1
-    integer,          parameter :: n          = 1000
+    integer,          parameter :: N          = 1000
 
+    character(len=1)                  :: input
     type(json_file)                   :: json
     type(c_ptr)                       :: client
     type(mqtt_client_connect_options) :: conn_opts = MQTT_CLIENT_CONNECT_OPTIONS_INITIALIZER
+    real                              :: x_ray(N), y_ray(N)
     integer                           :: delivered_token
     integer                           :: rc
     integer                           :: length = 1
-    real                              :: x_ray(n), y_ray(n)
-    character(len=1)                  :: input
 
     ! Initialise DISLIN and JSON.
     call init_dislin()
@@ -38,8 +36,8 @@ program main
 
     ! Create MQTT client.
     rc = mqtt_client_create(client, &
-                            ADDRESS // c_null_char, &
-                            CLIENT_ID // c_null_char, &
+                            ADDRESS // C_NULL_CHAR, &
+                            CLIENT_ID // C_NULL_CHAR, &
                             MQTTCLIENT_PERSISTENCE_NONE, &
                             c_null_ptr)
     ! Set connection options.
@@ -61,7 +59,7 @@ program main
     end if
 
     ! Subscribe to topic.
-    rc = mqtt_client_subscribe(client, TOPIC // c_null_char, QOS)
+    rc = mqtt_client_subscribe(client, TOPIC // C_NULL_CHAR, QOS)
     print '(5a, i0, a)', 'Subscribing to topic "', TOPIC, '" for client "', &
                          CLIENT_ID, '" using QoS ', QOS, ' ...'
 
@@ -93,7 +91,7 @@ contains
         ! call x11fnt('-Adobe-Helvetica-Medium-R-Normal-', 'STANDARD')
 
         call wintit(PLOT_TITLE)
-        call paghdr('f08paho demo /', '/ GNU Fortran 8', 1, 0)
+        call paghdr('f08paho demo /', '/ Fortran 2008', 1, 0)
 
         call name('X-Axis', 'x')
         call name('Y-Axis', 'y')
@@ -130,7 +128,7 @@ contains
     ! int MQTTClient_messageArrived(void *context, char *topicName, int topicLen, MQTTClient_message *message)
     function message_arrived(context, topic_name, topic_len, message) bind(c)
         use, intrinsic :: iso_c_binding
-        use :: paho_utils
+        use :: paho
         implicit none
         type(c_ptr),         intent(in), value :: context
         type(c_ptr),         intent(in), value :: topic_name
@@ -174,7 +172,7 @@ contains
     ! void MQTTClient_connectionLost(void *context, char *cause)
     subroutine connection_lost(context, cause) bind(c)
         use, intrinsic :: iso_c_binding
-        use :: paho_utils
+        use :: paho
         implicit none
         type(c_ptr),            intent(in), value :: context
         type(c_ptr),            intent(in), value :: cause

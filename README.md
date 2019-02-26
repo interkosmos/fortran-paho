@@ -14,23 +14,18 @@ source:
 ```
 $ git clone https://github.com/eclipse/paho.mqtt.c.git
 $ cd paho.mqtt.c/
-$ mkdir build
-$ cd build
+$ mkdir build && cd build/
 $ cmake ..
 $ make
 $ make install
 ```
 If you do not want to install Eclipse Paho globally with `make install`, copy
 `paho.mqtt.c` to you working directory (e.g., `f08paho/`). You then have to
-alter the `f08paho` Makefile and change the `CFLAGS` parameter to:
+alter the Makefile and change the `FFLAGS` parameter to:
 ```
-CFLAGS = -Wall -std=2008 \
-         -Wl,-rpath=/usr/local/lib/gcc8/ \
-         -Wl,-rpath=./paho.mqtt.c/build/src/ \
-         -I./paho.mqtt.c/src/ -L./paho.mqtt.c/build/src/
+FFLAGS = -Wall $(RPATH) -Wl,-rpath=./paho.mqtt.c/build/src/ -std=2008
 ```
-The GCC runtime path `-Wl,-rpath=/usr/local/lib/gcc8/` is required on FreeBSD
-only.
+The GCC runtime library search path (`RPATH`) is required on FreeBSD only.
 
 ## Build the Fortran interface
 Clone the repository with Git and use GNU make to build the Fortran interface:
@@ -48,7 +43,7 @@ Or compile the interface manually:
 ```
 $ gfortran8 -c paho.f90
 ```
-Add `-lpaho-mqtt3c` to your `LDFLAGS` to link Eclipse Paho, for instance:
+Add `-lpaho-mqtt3c` to your `LDLIBS` to link Eclipse Paho, for instance:
 ```
 $ gfortran8 -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ \
   -o example example.f90 paho.o -lpaho-mqtt3c

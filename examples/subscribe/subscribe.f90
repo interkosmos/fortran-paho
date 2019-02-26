@@ -7,10 +7,8 @@
 ! Licence:  ISC
 ! Source:   https://github.com/interkosmos/f08paho/
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_null_ptr, c_ptr
-    use :: paho_client
-    use :: paho_consts
-    use :: paho_types
+    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_null_ptr, c_ptr
+    use :: paho
     implicit none
 
     character(len=*), parameter :: ADDRESS   = 'tcp://localhost:1883'
@@ -26,8 +24,8 @@ program main
 
     ! Create MQTT client.
     rc = mqtt_client_create(client, &
-                            ADDRESS // c_null_char, &
-                            CLIENT_ID // c_null_char, &
+                            ADDRESS // C_NULL_CHAR, &
+                            CLIENT_ID // C_NULL_CHAR, &
                             MQTTCLIENT_PERSISTENCE_NONE, &
                             c_null_ptr)
 
@@ -51,7 +49,7 @@ program main
     ! Subscribe to topic.
     print '(5a, i0, a)', 'Subscribing to topic "', TOPIC, '" for client "', &
                          CLIENT_ID, '" using QoS ', QOS, ' ...'
-    rc = mqtt_client_subscribe(client, TOPIC // c_null_char, QOS)
+    rc = mqtt_client_subscribe(client, TOPIC // C_NULL_CHAR, QOS)
     print '(a)', 'Press Q<Enter> to quit'
 
     ! Wait for keyboard input.
@@ -67,7 +65,6 @@ program main
 contains
     ! void MQTTClient_deliveryComplete(void *context, MQTTClient_deliveryToken dt)
     subroutine delivery_complete(context, dt) bind(c)
-        use, intrinsic :: iso_c_binding
         implicit none
         type(c_ptr),         intent(in), value :: context
         integer(kind=c_int), intent(in)        :: dt
@@ -78,8 +75,6 @@ contains
 
     ! int MQTTClient_messageArrived(void *context, char *topicName, int topicLen, MQTTClient_message *message)
     function message_arrived(context, topic_name, topic_len, message) bind(c)
-        use, intrinsic :: iso_c_binding
-        use :: paho_utils
         implicit none
         type(c_ptr),         intent(in), value :: context
         type(c_ptr),         intent(in), value :: topic_name
@@ -98,8 +93,6 @@ contains
 
     ! void MQTTClient_connectionLost(void *context, char *cause)
     subroutine connection_lost(context, cause) bind(c)
-        use, intrinsic :: iso_c_binding
-        use :: paho_utils
         implicit none
         type(c_ptr),            intent(in), value :: context
         type(c_ptr),            intent(in), value :: cause

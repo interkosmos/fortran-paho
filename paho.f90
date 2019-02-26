@@ -5,7 +5,7 @@
 ! Author:   Philipp Engel
 ! Licence:  ISC
 ! Source:   https://github.com/interkosmos/f08paho/
-module paho_types
+module paho
     use, intrinsic :: iso_c_binding
     implicit none
 
@@ -69,12 +69,6 @@ module paho_types
         integer(kind=c_int)           :: max_inflight_messages
         integer(kind=c_int)           :: clean_start
     end type mqtt_client_connect_options
-end module paho_types
-
-module paho_consts
-    use, intrinsic :: iso_c_binding
-    use :: paho_types
-    implicit none
 
     integer(kind=c_int), parameter :: MQTTCLIENT_PERSISTENCE_NONE      = 1
     integer(kind=c_int), parameter :: MQTTCLIENT_SUCCESS               = 0
@@ -116,29 +110,25 @@ module paho_consts
     ! MQTTClient_message_initializer
     type(mqtt_client_message), parameter :: MQTT_CLIENT_MESSAGE_INITIALIZER  = &
         mqtt_client_message([ 'M', 'Q', 'T', 'M' ], 1, 0, c_null_ptr, 0, 0, 0, 0, MQTT_PROPERTIES_INITIALIZER)
-end module paho_consts
 
-module paho_client
-    use, intrinsic :: iso_c_binding
-    implicit none
-    private
-
+    public :: c_f_string_chars
     public :: mqtt_client_connect
     public :: mqtt_client_create
     public :: mqtt_client_destroy
     public :: mqtt_client_disconnect
     public :: mqtt_client_free
     public :: mqtt_client_free_message
+    public :: mqtt_client_payload
     public :: mqtt_client_publish_message
     public :: mqtt_client_set_callbacks
     public :: mqtt_client_subscribe
+    public :: mqtt_client_topic_name
     public :: mqtt_client_wait_for_completion
 
     interface
         ! int MQTTClient_connect(MQTTClient handle, MQTTClient_connectOptions *options)
         function mqtt_client_connect(handle, options) bind(c, name='MQTTClient_connect')
-            use, intrinsic :: iso_c_binding
-            use :: paho_types
+            import :: c_int, c_ptr, mqtt_client_connect_options
             implicit none
             type(c_ptr),                       intent(in), value :: handle
             type(mqtt_client_connect_options), intent(in)        :: options
@@ -148,7 +138,7 @@ module paho_client
         ! int MQTTClient_create(MQTTClient *handle, const char *serverURI, const char *clientId, int persistence_type, void *persistence_context)
         function mqtt_client_create(handle, server_uri, client_id, persistence_type, persistence_context) &
                 bind(c, name='MQTTClient_create')
-            use, intrinsic :: iso_c_binding
+            import :: c_char, c_int, c_ptr
             implicit none
             type(c_ptr),            intent(in)        :: handle
             character(kind=c_char), intent(in)        :: server_uri
@@ -160,7 +150,7 @@ module paho_client
 
         ! int MQTTClient_disconnect(MQTTClient handle, int timeout)
         function mqtt_client_disconnect(handle, timeout) bind(c, name='MQTTClient_disconnect')
-            use, intrinsic :: iso_c_binding
+            import :: c_int, c_ptr
             implicit none
             type(c_ptr),         intent(in), value :: handle
             integer(kind=c_int), intent(in), value :: timeout
@@ -169,8 +159,7 @@ module paho_client
 
         ! int MQTTClient_publishMessage(MQTTClient handle, const char* topicName, MQTTClient_message* msg, MQTTClient_deliveryToken* dt);
         function mqtt_client_publish_message(handle, topic_name, msg, dt) bind(c, name='MQTTClient_publishMessage')
-            use, intrinsic :: iso_c_binding
-            use :: paho_types
+            import :: c_char, c_int, c_ptr, mqtt_client_message
             implicit none
             type(c_ptr),               intent(in), value :: handle
             character(kind=c_char),    intent(in)        :: topic_name
@@ -181,7 +170,7 @@ module paho_client
 
         ! int MQTTClient_setCallbacks(MQTTClient handle, void *context, MQTTClient_connectionLost *cl, MQTTClient_messageArrived *ma, MQTTClient_deliveryComplete *dc);
         function mqtt_client_set_callbacks(handle, context, cl, ma, dc) bind(c, name='MQTTClient_setCallbacks')
-            use, intrinsic :: iso_c_binding
+            import :: c_funptr, c_int, c_ptr
             implicit none
             type(c_ptr),    intent(in), value :: handle
             type(c_ptr),    intent(in), value :: context
@@ -193,7 +182,7 @@ module paho_client
 
         ! int MQTTClient_subscribe(MQTTClient handle, const char *topic, int qos)
         function mqtt_client_subscribe(handle, topic, qos) bind(c, name='MQTTClient_subscribe')
-            use, intrinsic :: iso_c_binding
+            import :: c_char, c_int, c_ptr
             implicit none
             type(c_ptr),            intent(in), value :: handle
             character(kind=c_char), intent(in)        :: topic
@@ -203,7 +192,7 @@ module paho_client
 
         ! int MQTTClient_waitForCompletion(MQTTClient handle, MQTTClient_deliveryToken dt, unsigned long timeout);
         function mqtt_client_wait_for_completion(handle, dt, timeout) bind(c, name='MQTTClient_waitForCompletion')
-            use, intrinsic :: iso_c_binding
+            import :: c_int, c_long, c_ptr
             implicit none
             type(c_ptr),          intent(in), value :: handle
             integer(kind=c_int),  intent(in), value :: dt
@@ -213,41 +202,30 @@ module paho_client
 
         ! void MQTTClient_destroy(MQTTClient *handle)
         subroutine mqtt_client_destroy(handle) bind(c, name='MQTTClient_destroy')
-            use, intrinsic :: iso_c_binding
+            import :: c_ptr
             implicit none
             type(c_ptr), intent(in) :: handle
         end subroutine mqtt_client_destroy
 
         ! void MQTTClient_free(void *ptr)
         subroutine mqtt_client_free(ptr) bind(c, name='MQTTClient_free')
-            use, intrinsic :: iso_c_binding
+            import :: c_ptr
             implicit none
             type(c_ptr), intent(in), value :: ptr
         end subroutine mqtt_client_free
 
         ! void MQTTClient_freeMessage(MQTTClient_message **msg)
         subroutine mqtt_client_free_message(msg) bind(c, name='MQTTClient_freeMessage')
-            use, intrinsic :: iso_c_binding
-            use :: paho_types
+            import :: c_ptr
             implicit none
             type(c_ptr), intent(in) :: msg
         end subroutine mqtt_client_free_message
     end interface
-end module paho_client
-
-module paho_utils
-    use, intrinsic :: iso_c_binding
-    implicit none
-    private
-
-    public :: c_f_string_chars
-    public :: mqtt_client_payload
-    public :: mqtt_client_topic_name
 contains
-    pure subroutine c_f_string_chars(c_string, f_string)
+    subroutine c_f_string_chars(c_string, f_string)
         !! Copies a C string, passed as a char-array reference,
         !! to a Fortran string.
-        use, intrinsic :: iso_c_binding, only: c_char, c_null_char
+        use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_char
         implicit none
         character(len=1, kind=c_char), intent(in)  :: c_string(:)
         character(len=*),              intent(out) :: f_string
@@ -255,7 +233,7 @@ contains
 
         i = 1
 
-        do while (c_string(i) /= c_null_char .and. i <= len(f_string))
+        do while (c_string(i) /= C_NULL_CHAR .and. i <= len(f_string))
             f_string(i:i) = c_string(i)
             i = i + 1
         end do
@@ -266,7 +244,6 @@ contains
 
     function mqtt_client_payload(ptr)
         use, intrinsic :: iso_c_binding, only: c_char, c_ptr
-        use :: paho_types
         type(c_ptr),               intent(in)  :: ptr
         character(len=:),          allocatable :: mqtt_client_payload
         type(mqtt_client_message), pointer     :: message_ptr
@@ -296,4 +273,4 @@ contains
         call c_f_string_chars(topic_name_ptrs, mqtt_client_topic_name)
         mqtt_client_topic_name = trim(mqtt_client_topic_name)
     end function mqtt_client_topic_name
-end module paho_utils
+end module paho

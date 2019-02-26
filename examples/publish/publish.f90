@@ -7,10 +7,8 @@
 ! Licence:  ISC
 ! Source:   https://github.com/interkosmos/f08paho/
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_null_ptr, c_ptr
-    use :: paho_client
-    use :: paho_consts
-    use :: paho_types
+    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_null_ptr, c_ptr
+    use :: paho
     implicit none
 
     character(len=*),     parameter :: ADDRESS   = 'tcp://localhost:1883'
@@ -27,12 +25,12 @@ program main
     integer                           :: rc
 
     ! The payload string.
-    character(len=len(TEXT) + 1, kind=c_char), target :: payload = TEXT // c_null_char
+    character(len=len(TEXT) + 1, kind=c_char), target :: payload = TEXT // C_NULL_CHAR
 
     ! Create MQTT client.
     rc = mqtt_client_create(client, &
-                            ADDRESS // c_null_char, &
-                            CLIENT_ID // c_null_char, &
+                            ADDRESS // C_NULL_CHAR, &
+                            CLIENT_ID // C_NULL_CHAR, &
                             MQTTCLIENT_PERSISTENCE_NONE, &
                             c_null_ptr)
 
@@ -52,7 +50,7 @@ program main
     pub_msg%qos         = QOS
     pub_msg%retained    = 0
 
-    rc = mqtt_client_publish_message(client, TOPIC // c_null_char, pub_msg, token)
+    rc = mqtt_client_publish_message(client, TOPIC // C_NULL_CHAR, pub_msg, token)
     print '(a, i0, 7a)', 'Waiting for up to ', TIMEOUT / 1000, ' second(s) for publication of "', &
                          trim(payload), '" on topic "', TOPIC, '" for client with ClientID "', CLIENT_ID, '"'
 
