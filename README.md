@@ -1,6 +1,7 @@
 # f08paho
 A Fortran 2008 interface to the [Eclipse Paho](https://www.eclipse.org/paho/)
-MQTT client library. Currently, `f08paho` is just a proof of concept.
+MQTT client library, for connecting Fortran to the Internet of Things.
+Currently, `f08paho` is just a proof of concept.
 
 ## Requirements
 In order to use the interface, you will need a Fortran 2008 compiler for
