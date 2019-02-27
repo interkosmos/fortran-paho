@@ -7,7 +7,7 @@
 ! Licence:  ISC
 ! Source:   https://github.com/interkosmos/f08paho/
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_char, c_null_ptr, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: paho
     implicit none
 

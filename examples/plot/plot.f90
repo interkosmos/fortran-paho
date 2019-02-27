@@ -7,7 +7,7 @@
 ! Licence:  ISC
 ! Source:   https://github.com/interkosmos/f08paho/
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_null_ptr, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: dislin
     use :: json_module
     use :: paho
@@ -116,7 +116,6 @@ contains
 
     ! void MQTTClient_deliveryComplete(void *context, MQTTClient_deliveryToken dt)
     subroutine delivery_complete(context, dt) bind(c)
-        use, intrinsic :: iso_c_binding
         implicit none
         type(c_ptr),         intent(in), value :: context
         integer(kind=c_int), intent(in)        :: dt
@@ -171,8 +170,6 @@ contains
 
     ! void MQTTClient_connectionLost(void *context, char *cause)
     subroutine connection_lost(context, cause) bind(c)
-        use, intrinsic :: iso_c_binding
-        use :: paho
         implicit none
         type(c_ptr),            intent(in), value :: context
         type(c_ptr),            intent(in), value :: cause
