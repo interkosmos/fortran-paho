@@ -1,10 +1,11 @@
 # fortran-paho
-A Fortran 2008 interface to the [Eclipse Paho](https://www.eclipse.org/paho/)
-MQTT client library, for connecting Fortran to the Internet of Things.
-Currently, `fortran-paho` is just a proof of concept.
+A collection of Fortran 2008 interfaces to the
+[Eclipse Paho](https://www.eclipse.org/paho/) MQTT client library, for
+connecting Fortran to the Internet of Things.  Currently, `fortran-paho` is just
+a proof of concept.
 
 ## Requirements
-In order to use the interface, you will need a Fortran 2008 compiler for
+In order to use the interfaces, you will need a Fortran 2008 compiler for
 building and the Eclipse Paho C library for linking. Compilation has been tested
 with GNU Fortran 9, but should work with other modern compilers as well.
 
@@ -14,7 +15,7 @@ If Eclipse Paho is not installed already, clone the GitHub
 source:
 
 ```
-$ git clone https://github.com/eclipse/paho.mqtt.c.git
+$ git clone https://github.com/eclipse/paho.mqtt.c
 $ cd paho.mqtt.c/
 $ mkdir build && cd build/
 $ cmake ..
@@ -32,6 +33,7 @@ FFLAGS = -Wall -Wl,-rpath=./paho.mqtt.c/build/src/ -std=2008
 
 ## Build the Fortran interface
 Clone the repository with Git and use GNU make to build the Fortran interface:
+
 ```
 $ git clone https://github.com/interkosmos/fortran-paho
 $ cd fortran-paho/
@@ -67,6 +69,7 @@ or connect to `iot.eclipse.org` on port `1883`.
 * **plot** uses [json-fortran](https://github.com/jacobwilliams/json-fortran/) and [DISLIN](http://www.mps.mpg.de/dislin/) to plot data in real-time.
 
 Build the examples with:
+
 ```
 $ make <name>
 ```
