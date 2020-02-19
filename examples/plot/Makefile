@@ -1,5 +1,5 @@
-FC       = gfortran8
-RPATH    = -Wl,-rpath=/usr/local/lib/gcc8/
+FC       = gfortran
+RPATH    = -Wl,-rpath=/usr/local/lib/gcc9/
 FFLAGS   = -Wall $(RPATH) -Wl,-rpath=./lib/ -std=f2008
 LDFLAGS  = -I./include/ -L./lib/
 LDLIBS   = ./lib/libjsonfortran.a ./lib/dislin-11.1.a -lm -lXm -lXt -lX11 -lGL -lpaho-mqtt3c

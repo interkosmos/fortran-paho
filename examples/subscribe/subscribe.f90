@@ -5,7 +5,6 @@
 !
 ! Author:   Philipp Engel
 ! Licence:  ISC
-! Source:   https://github.com/interkosmos/f08paho/
 program main
     use, intrinsic :: iso_c_binding
     use :: paho
@@ -24,8 +23,8 @@ program main
 
     ! Create MQTT client.
     rc = mqtt_client_create(client, &
-                            ADDRESS // C_NULL_CHAR, &
-                            CLIENT_ID // C_NULL_CHAR, &
+                            ADDRESS // c_null_char, &
+                            CLIENT_ID // c_null_char, &
                             MQTTCLIENT_PERSISTENCE_NONE, &
                             c_null_ptr)
 
@@ -49,7 +48,7 @@ program main
     ! Subscribe to topic.
     print '(5a, i0, a)', 'Subscribing to topic "', TOPIC, '" for client "', &
                          CLIENT_ID, '" using QoS ', QOS, ' ...'
-    rc = mqtt_client_subscribe(client, TOPIC // C_NULL_CHAR, QOS)
+    rc = mqtt_client_subscribe(client, TOPIC // c_null_char, QOS)
     print '(a)', 'Press Q<Enter> to quit'
 
     ! Wait for keyboard input.
@@ -65,7 +64,6 @@ program main
 contains
     ! void MQTTClient_deliveryComplete(void *context, MQTTClient_deliveryToken dt)
     subroutine delivery_complete(context, dt) bind(c)
-        implicit none
         type(c_ptr),         intent(in), value :: context
         integer(kind=c_int), intent(in)        :: dt
 
@@ -75,7 +73,6 @@ contains
 
     ! int MQTTClient_messageArrived(void *context, char *topicName, int topicLen, MQTTClient_message *message)
     function message_arrived(context, topic_name, topic_len, message) bind(c)
-        implicit none
         type(c_ptr),         intent(in), value :: context
         type(c_ptr),         intent(in), value :: topic_name
         integer(kind=c_int), intent(in), value :: topic_len
@@ -93,7 +90,6 @@ contains
 
     ! void MQTTClient_connectionLost(void *context, char *cause)
     subroutine connection_lost(context, cause) bind(c)
-        implicit none
         type(c_ptr),            intent(in), value :: context
         type(c_ptr),            intent(in), value :: cause
         character(kind=c_char), pointer           :: cause_ptrs(:)

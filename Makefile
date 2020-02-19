@@ -1,10 +1,11 @@
-FC        = gfortran8
-RPATH     = -Wl,-rpath=/usr/local/lib/gcc8/
-FFLAGS    = -Wall $(RPATH) -Wl,-rpath=./paho.mqtt.c/build/src/ -std=f2008
+.POSIX:
+
+FC        = gfortran
+FFLAGS    = -Wall -Wl,-rpath=./paho.mqtt.c/build/src/ -std=f2008
 LDFLAGS   = -I./paho.mqtt.c/src/ -L./paho.mqtt.c/build/src/
 LDLIBS    = -lpaho-mqtt3c
 
-PAHO_SRC  = paho.f90
+PAHO_SRC  = src/paho.f90
 PAHO_OBJ  = paho.o
 
 DIR       = examples

@@ -1,17 +1,18 @@
-# f08paho
+# fortran-paho
 A Fortran 2008 interface to the [Eclipse Paho](https://www.eclipse.org/paho/)
 MQTT client library, for connecting Fortran to the Internet of Things.
-Currently, `f08paho` is just a proof of concept.
+Currently, `fortran-paho` is just a proof of concept.
 
 ## Requirements
 In order to use the interface, you will need a Fortran 2008 compiler for
 building and the Eclipse Paho C library for linking. Compilation has been tested
-with GNU Fortran 8, but should work with other modern compilers as well.
+with GNU Fortran 9, but should work with other modern compilers as well.
 
 ## Build Eclipse Paho
 If Eclipse Paho is not installed already, clone the GitHub
 [repository](https://github.com/eclipse/paho.mqtt.c) and build it from
 source:
+
 ```
 $ git clone https://github.com/eclipse/paho.mqtt.c.git
 $ cd paho.mqtt.c/
@@ -20,34 +21,40 @@ $ cmake ..
 $ make
 $ make install
 ```
+
 If you do not want to install Eclipse Paho globally with `make install`, copy
-`paho.mqtt.c` to you working directory (e.g., `f08paho/`). You then have to
+`paho.mqtt.c` to you working directory (e.g., `fortran-paho/`). You then have to
 alter the Makefile and change the `FFLAGS` parameter to:
+
 ```
-FFLAGS = -Wall $(RPATH) -Wl,-rpath=./paho.mqtt.c/build/src/ -std=2008
+FFLAGS = -Wall -Wl,-rpath=./paho.mqtt.c/build/src/ -std=2008
 ```
-The GCC runtime library search path (`RPATH`) is required on FreeBSD only.
 
 ## Build the Fortran interface
 Clone the repository with Git and use GNU make to build the Fortran interface:
 ```
-$ git clone https://github.com/interkosmos/f08paho.git
-$ cd f08paho/
+$ git clone https://github.com/interkosmos/fortran-paho
+$ cd fortran-paho/
 $ make paho
 ```
-You can override the default compiler (`gfortran8`) by passing the `FC`
+
+You can override the default compiler (`gfortran`) by passing the `FC`
 argument, for example:
+
 ```
-$ make paho FC=gfortran
+$ make paho FC=gfortran9
 ```
+
 Or compile the interface manually:
+
 ```
-$ gfortran8 -c paho.f90
+$ gfortran -c src/paho.f90
 ```
+
 Add `-lpaho-mqtt3c` to your `LDLIBS` to link Eclipse Paho, for instance:
+
 ```
-$ gfortran8 -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ \
-  -o example example.f90 paho.o -lpaho-mqtt3c
+$ gfortran -I/usr/local/include/ -L/usr/local/lib/ -o example example.f90 paho.o -lpaho-mqtt3c
 ```
 
 ## Examples

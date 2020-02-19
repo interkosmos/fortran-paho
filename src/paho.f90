@@ -4,7 +4,6 @@
 !
 ! Author:   Philipp Engel
 ! Licence:  ISC
-! Source:   https://github.com/interkosmos/f08paho/
 module paho
     use, intrinsic :: iso_c_binding
     implicit none
@@ -129,7 +128,6 @@ module paho
         ! int MQTTClient_connect(MQTTClient handle, MQTTClient_connectOptions *options)
         function mqtt_client_connect(handle, options) bind(c, name='MQTTClient_connect')
             import :: c_int, c_ptr, mqtt_client_connect_options
-            implicit none
             type(c_ptr),                       intent(in), value :: handle
             type(mqtt_client_connect_options), intent(in)        :: options
             integer(kind=c_int)                                  :: mqtt_client_connect
@@ -139,7 +137,6 @@ module paho
         function mqtt_client_create(handle, server_uri, client_id, persistence_type, persistence_context) &
                 bind(c, name='MQTTClient_create')
             import :: c_char, c_int, c_ptr
-            implicit none
             type(c_ptr),            intent(in)        :: handle
             character(kind=c_char), intent(in)        :: server_uri
             character(kind=c_char), intent(in)        :: client_id
@@ -151,7 +148,6 @@ module paho
         ! int MQTTClient_disconnect(MQTTClient handle, int timeout)
         function mqtt_client_disconnect(handle, timeout) bind(c, name='MQTTClient_disconnect')
             import :: c_int, c_ptr
-            implicit none
             type(c_ptr),         intent(in), value :: handle
             integer(kind=c_int), intent(in), value :: timeout
             integer(kind=c_int)                    :: mqtt_client_disconnect
@@ -160,7 +156,6 @@ module paho
         ! int MQTTClient_publishMessage(MQTTClient handle, const char* topicName, MQTTClient_message* msg, MQTTClient_deliveryToken* dt);
         function mqtt_client_publish_message(handle, topic_name, msg, dt) bind(c, name='MQTTClient_publishMessage')
             import :: c_char, c_int, c_ptr, mqtt_client_message
-            implicit none
             type(c_ptr),               intent(in), value :: handle
             character(kind=c_char),    intent(in)        :: topic_name
             type(mqtt_client_message), intent(in)        :: msg
@@ -171,7 +166,6 @@ module paho
         ! int MQTTClient_setCallbacks(MQTTClient handle, void *context, MQTTClient_connectionLost *cl, MQTTClient_messageArrived *ma, MQTTClient_deliveryComplete *dc);
         function mqtt_client_set_callbacks(handle, context, cl, ma, dc) bind(c, name='MQTTClient_setCallbacks')
             import :: c_funptr, c_int, c_ptr
-            implicit none
             type(c_ptr),    intent(in), value :: handle
             type(c_ptr),    intent(in), value :: context
             type(c_funptr), intent(in), value :: cl
@@ -183,7 +177,6 @@ module paho
         ! int MQTTClient_subscribe(MQTTClient handle, const char *topic, int qos)
         function mqtt_client_subscribe(handle, topic, qos) bind(c, name='MQTTClient_subscribe')
             import :: c_char, c_int, c_ptr
-            implicit none
             type(c_ptr),            intent(in), value :: handle
             character(kind=c_char), intent(in)        :: topic
             integer(kind=c_int),    intent(in), value :: qos
@@ -193,7 +186,6 @@ module paho
         ! int MQTTClient_waitForCompletion(MQTTClient handle, MQTTClient_deliveryToken dt, unsigned long timeout);
         function mqtt_client_wait_for_completion(handle, dt, timeout) bind(c, name='MQTTClient_waitForCompletion')
             import :: c_int, c_long, c_ptr
-            implicit none
             type(c_ptr),          intent(in), value :: handle
             integer(kind=c_int),  intent(in), value :: dt
             integer(kind=c_long), intent(in), value :: timeout
@@ -203,37 +195,32 @@ module paho
         ! void MQTTClient_destroy(MQTTClient *handle)
         subroutine mqtt_client_destroy(handle) bind(c, name='MQTTClient_destroy')
             import :: c_ptr
-            implicit none
             type(c_ptr), intent(in) :: handle
         end subroutine mqtt_client_destroy
 
         ! void MQTTClient_free(void *ptr)
         subroutine mqtt_client_free(ptr) bind(c, name='MQTTClient_free')
             import :: c_ptr
-            implicit none
             type(c_ptr), intent(in), value :: ptr
         end subroutine mqtt_client_free
 
         ! void MQTTClient_freeMessage(MQTTClient_message **msg)
         subroutine mqtt_client_free_message(msg) bind(c, name='MQTTClient_freeMessage')
             import :: c_ptr
-            implicit none
             type(c_ptr), intent(in) :: msg
         end subroutine mqtt_client_free_message
     end interface
 contains
     subroutine c_f_string_chars(c_string, f_string)
-        !! Copies a C string, passed as a char-array reference,
-        !! to a Fortran string.
-        use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_char
-        implicit none
-        character(len=1, kind=c_char), intent(in)  :: c_string(:)
+        !! Copies a C string, passed as a char-array reference, to a Fortran
+        !! string.
+        character(len=1, kind=c_char), intent(in)  :: c_string(*)
         character(len=*),              intent(out) :: f_string
         integer                                    :: i
 
         i = 1
 
-        do while (c_string(i) /= C_NULL_CHAR .and. i <= len(f_string))
+        do while (c_string(i) /= c_null_char .and. i <= len(f_string))
             f_string(i:i) = c_string(i)
             i = i + 1
         end do
@@ -241,6 +228,30 @@ contains
         if (i < len(f_string)) &
             f_string(i:) = ' '
     end subroutine c_f_string_chars
+
+    subroutine c_f_string_ptr(c_string, f_string)
+        !! Copies a C string, passed as a C pointer, to a Fortran string.
+        type(c_ptr),      intent(in)           :: c_string
+        character(len=*), intent(out)          :: f_string
+        character(kind=c_char, len=1), pointer :: char_ptrs(:)
+        integer                                :: i
+
+        if (.not. c_associated(c_string)) then
+            f_string = ' '
+        else
+            call c_f_pointer(c_string, char_ptrs, [huge(0)])
+
+            i = 1
+
+            do while (char_ptrs(i) /= c_null_char .and. i <= len(f_string))
+                f_string(i:i) = char_ptrs(i)
+                i = i + 1
+            end do
+
+            if (i < len(f_string)) &
+                f_string(i:) = ' '
+        end if
+    end subroutine c_f_string_ptr
 
     function mqtt_client_payload(ptr)
         use, intrinsic :: iso_c_binding, only: c_char, c_ptr

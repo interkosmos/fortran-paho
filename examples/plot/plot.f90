@@ -5,7 +5,6 @@
 !
 ! Author:   Philipp Engel
 ! Licence:  ISC
-! Source:   https://github.com/interkosmos/f08paho/
 program main
     use, intrinsic :: iso_c_binding
     use :: dislin
@@ -36,8 +35,8 @@ program main
 
     ! Create MQTT client.
     rc = mqtt_client_create(client, &
-                            ADDRESS // C_NULL_CHAR, &
-                            CLIENT_ID // C_NULL_CHAR, &
+                            ADDRESS // c_null_char, &
+                            CLIENT_ID // c_null_char, &
                             MQTTCLIENT_PERSISTENCE_NONE, &
                             c_null_ptr)
     ! Set connection options.
@@ -59,7 +58,7 @@ program main
     end if
 
     ! Subscribe to topic.
-    rc = mqtt_client_subscribe(client, TOPIC // C_NULL_CHAR, QOS)
+    rc = mqtt_client_subscribe(client, TOPIC // c_null_char, QOS)
     print '(5a, i0, a)', 'Subscribing to topic "', TOPIC, '" for client "', &
                          CLIENT_ID, '" using QoS ', QOS, ' ...'
 
@@ -75,7 +74,6 @@ program main
     call disfin()
 contains
     subroutine init_dislin()
-        implicit none
         integer :: c
 
         call metafl('CONS')
@@ -84,12 +82,7 @@ contains
 
         call disini()
 
-        ! Set font.
-        ! call bmpfnt('SIMPLEX')
         call simplx()
-        ! call complx()
-        ! call x11fnt('-Adobe-Helvetica-Medium-R-Normal-', 'STANDARD')
-
         call wintit(PLOT_TITLE)
         call paghdr('f08paho demo /', '/ Fortran 2008', 1, 0)
 
@@ -116,7 +109,6 @@ contains
 
     ! void MQTTClient_deliveryComplete(void *context, MQTTClient_deliveryToken dt)
     subroutine delivery_complete(context, dt) bind(c)
-        implicit none
         type(c_ptr),         intent(in), value :: context
         integer(kind=c_int), intent(in)        :: dt
 
@@ -128,7 +120,6 @@ contains
     function message_arrived(context, topic_name, topic_len, message) bind(c)
         use, intrinsic :: iso_c_binding
         use :: paho
-        implicit none
         type(c_ptr),         intent(in), value :: context
         type(c_ptr),         intent(in), value :: topic_name
         integer(kind=c_int), intent(in), value :: topic_len
@@ -170,7 +161,6 @@ contains
 
     ! void MQTTClient_connectionLost(void *context, char *cause)
     subroutine connection_lost(context, cause) bind(c)
-        implicit none
         type(c_ptr),            intent(in), value :: context
         type(c_ptr),            intent(in), value :: cause
         character(kind=c_char), pointer           :: cause_ptrs(:)
