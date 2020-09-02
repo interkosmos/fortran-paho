@@ -10,12 +10,12 @@ program main
     use :: paho
     implicit none
 
-    character(len=*),     parameter :: ADDRESS   = 'tcp://localhost:1883'
-    character(len=*),     parameter :: CLIENT_ID = 'FortranPubClient'
-    character(len=*),     parameter :: TOPIC     = 'fortran'
-    character(len=*),     parameter :: TEXT      = 'Hello, World!'
-    integer,              parameter :: QOS       = 1
-    integer(kind=c_long), parameter :: TIMEOUT   = 10000
+    character(len=*), parameter :: ADDRESS   = 'tcp://localhost:1883'
+    character(len=*), parameter :: CLIENT_ID = 'FortranPubClient'
+    character(len=*), parameter :: TOPIC     = 'fortran'
+    character(len=*), parameter :: TEXT      = 'Hello, World!'
+    integer,          parameter :: QOS       = 1
+    integer,          parameter :: TIMEOUT   = 10000
 
     type(c_ptr)                       :: client
     type(mqtt_client_connect_options) :: conn_opts = MQTT_CLIENT_CONNECT_OPTIONS_INITIALIZER
@@ -54,7 +54,7 @@ program main
                          trim(payload), '" on topic "', TOPIC, '" for client with client id "', &
                          CLIENT_ID, '"'
 
-    rc = mqtt_client_wait_for_completion(client, token, TIMEOUT)
+    rc = mqtt_client_wait_for_completion(client, token, int(TIMEOUT, kind=8))
     print '(a, i0, a)', 'Message with delivery token ', token, ' delivered'
 
     rc = mqtt_client_disconnect(client, TIMEOUT)

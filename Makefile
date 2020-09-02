@@ -2,7 +2,8 @@
 
 FC        = gfortran
 AR        = ar
-FFLAGS    = -Wall -Wl,-rpath=./paho.mqtt.c/build/src/ -std=f2008
+FFLAGS    = -Wall -std=f2008 -Wno-unused-dummy-argument \
+            -Wl,-rpath=./paho.mqtt.c/build/src/
 LDFLAGS   = -I./paho.mqtt.c/src/ -L./paho.mqtt.c/build/src/
 LDLIBS    = -lpaho-mqtt3c
 ARFLAGS   = rcs
@@ -30,7 +31,7 @@ $(SUBSCRIBE): $(DIR)/$(SUBSCRIBE)/$(SUBSCRIBE).f90 $(TARGET)
 $(PUBLISH): $(DIR)/$(PUBLISH)/$(PUBLISH).f90 $(TARGET)
 	$(FC) $(FFLAGS) $(LDFLAGS) -o $@ $? $(LDLIBS)
 
-$(PLOT):
+$(PLOT): $(TARGET)
 	cd $(DIR)/$(PLOT)/ && make
 
 clean:

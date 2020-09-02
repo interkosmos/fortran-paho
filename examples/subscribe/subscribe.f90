@@ -97,7 +97,7 @@ contains
 
         ! Get cause as Fortran string.
         call c_f_pointer(cause, cause_ptrs, shape=[len(cause_str)])
-        call c_f_string_chars(cause_ptrs, cause_str)
+        call c_f_str_chars(cause_ptrs, cause_str)
 
         print '(a)',  'Connection lost'
         print '(2a)', '    cause: ', cause_str

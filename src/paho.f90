@@ -8,6 +8,22 @@ module paho
     use, intrinsic :: iso_c_binding
     implicit none
 
+    public :: c_f_str_chars
+    public :: c_f_str_ptr
+
+    public :: mqtt_client_connect
+    public :: mqtt_client_create
+    public :: mqtt_client_destroy
+    public :: mqtt_client_disconnect
+    public :: mqtt_client_free
+    public :: mqtt_client_free_message
+    public :: mqtt_client_payload
+    public :: mqtt_client_publish_message
+    public :: mqtt_client_set_callbacks
+    public :: mqtt_client_subscribe
+    public :: mqtt_client_topic_name
+    public :: mqtt_client_wait_for_completion
+
     ! MQTTProperties
     type, bind(c) :: mqtt_properties
         integer(kind=c_int) :: count
@@ -110,20 +126,6 @@ module paho
     type(mqtt_client_message), parameter :: MQTT_CLIENT_MESSAGE_INITIALIZER  = &
         mqtt_client_message([ 'M', 'Q', 'T', 'M' ], 1, 0, c_null_ptr, 0, 0, 0, 0, MQTT_PROPERTIES_INITIALIZER)
 
-    public :: c_f_string_chars
-    public :: mqtt_client_connect
-    public :: mqtt_client_create
-    public :: mqtt_client_destroy
-    public :: mqtt_client_disconnect
-    public :: mqtt_client_free
-    public :: mqtt_client_free_message
-    public :: mqtt_client_payload
-    public :: mqtt_client_publish_message
-    public :: mqtt_client_set_callbacks
-    public :: mqtt_client_subscribe
-    public :: mqtt_client_topic_name
-    public :: mqtt_client_wait_for_completion
-
     interface
         ! int MQTTClient_connect(MQTTClient handle, MQTTClient_connectOptions *options)
         function mqtt_client_connect(handle, options) bind(c, name='MQTTClient_connect')
@@ -211,47 +213,47 @@ module paho
         end subroutine mqtt_client_free_message
     end interface
 contains
-    subroutine c_f_string_chars(c_string, f_string)
+    subroutine c_f_str_chars(c_str, f_str)
         !! Copies a C string, passed as a char-array reference, to a Fortran
         !! string.
-        character(len=1, kind=c_char), intent(in)  :: c_string(*)
-        character(len=*),              intent(out) :: f_string
+        character(len=1, kind=c_char), intent(in)  :: c_str(*)
+        character(len=*),              intent(out) :: f_str
         integer                                    :: i
 
         i = 1
 
-        do while (c_string(i) /= c_null_char .and. i <= len(f_string))
-            f_string(i:i) = c_string(i)
+        do while (c_str(i) /= c_null_char .and. i <= len(f_str))
+            f_str(i:i) = c_str(i)
             i = i + 1
         end do
 
-        if (i < len(f_string)) &
-            f_string(i:) = ' '
-    end subroutine c_f_string_chars
+        if (i < len(f_str)) &
+            f_str(i:) = ' '
+    end subroutine c_f_str_chars
 
-    subroutine c_f_string_ptr(c_string, f_string)
+    subroutine c_f_str_ptr(c_str, f_str)
         !! Copies a C string, passed as a C pointer, to a Fortran string.
-        type(c_ptr),      intent(in)           :: c_string
-        character(len=*), intent(out)          :: f_string
-        character(kind=c_char, len=1), pointer :: char_ptrs(:)
+        type(c_ptr),      intent(in)           :: c_str
+        character(len=*), intent(out)          :: f_str
+        character(kind=c_char, len=1), pointer :: chars(:)
         integer                                :: i
 
-        if (.not. c_associated(c_string)) then
-            f_string = ' '
+        if (.not. c_associated(c_str)) then
+            f_str = ' '
         else
-            call c_f_pointer(c_string, char_ptrs, [huge(0)])
+            call c_f_pointer(c_str, chars, [huge(0)])
 
             i = 1
 
-            do while (char_ptrs(i) /= c_null_char .and. i <= len(f_string))
-                f_string(i:i) = char_ptrs(i)
+            do while (chars(i) /= c_null_char .and. i <= len(f_str))
+                f_str(i:i) = chars(i)
                 i = i + 1
             end do
 
-            if (i < len(f_string)) &
-                f_string(i:) = ' '
+            if (i < len(f_str)) &
+                f_str(i:) = ' '
         end if
-    end subroutine c_f_string_ptr
+    end subroutine c_f_str_ptr
 
     function mqtt_client_payload(ptr)
         use, intrinsic :: iso_c_binding, only: c_char, c_ptr
@@ -266,7 +268,7 @@ contains
         call c_f_pointer(ptr, message_ptr)
         call c_f_pointer(message_ptr%payload, payload_ptrs, shape=[message_ptr%payload_len])
         allocate (character(message_ptr%payload_len) :: mqtt_client_payload)
-        call c_f_string_chars(payload_ptrs, mqtt_client_payload)
+        call c_f_str_chars(payload_ptrs, mqtt_client_payload)
     end function mqtt_client_payload
 
     function mqtt_client_topic_name(ptr, length)
@@ -281,7 +283,7 @@ contains
 
         allocate (character(length) :: mqtt_client_topic_name)
         call c_f_pointer(ptr, topic_name_ptrs, shape=[length])
-        call c_f_string_chars(topic_name_ptrs, mqtt_client_topic_name)
+        call c_f_str_chars(topic_name_ptrs, mqtt_client_topic_name)
         mqtt_client_topic_name = trim(mqtt_client_topic_name)
     end function mqtt_client_topic_name
 end module paho
