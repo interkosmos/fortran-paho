@@ -51,11 +51,12 @@ program main
 
     rc = mqtt_client_publish_message(client, TOPIC // c_null_char, pub_msg, token)
     print '(a, i0, 7a)', 'Waiting for up to ', TIMEOUT / 1000, ' second(s) for publication of "', &
-                         trim(payload), '" on topic "', TOPIC, '" for client with ClientID "', CLIENT_ID, '"'
+                         trim(payload), '" on topic "', TOPIC, '" for client with client id "', &
+                         CLIENT_ID, '"'
 
     rc = mqtt_client_wait_for_completion(client, token, TIMEOUT)
     print '(a, i0, a)', 'Message with delivery token ', token, ' delivered'
 
-    rc = mqtt_client_disconnect(client, 10000)
+    rc = mqtt_client_disconnect(client, TIMEOUT)
     call mqtt_client_destroy(client)
 end program main

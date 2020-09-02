@@ -1,13 +1,13 @@
 # fortran-paho
-A collection of Fortran 2008 interfaces to the
-[Eclipse Paho](https://www.eclipse.org/paho/) MQTT client library, for
-connecting Fortran to the Internet of Things.  Currently, `fortran-paho` is just
-a proof of concept.
+A collection of Fortran 2008 interface bindings to the
+[Eclipse Paho](https://www.eclipse.org/paho/) MQTT client library, to
+connect Fortran to the Internet of Things. Currently, *fortran-paho* is just a
+proof of concept.
 
 ## Requirements
-In order to use the interfaces, you will need a Fortran 2008 compiler for
-building and the Eclipse Paho C library for linking. Compilation has been tested
-with GNU Fortran 9, but should work with other modern compilers as well.
+A Fortran 2008 compiler and the Eclipse Paho C library are required for building
+and linking the library. Compilation has been tested with GNU Fortran 10, but
+should work with other modern compilers as well.
 
 ## Build Eclipse Paho
 If Eclipse Paho is not installed already, clone the GitHub
@@ -31,32 +31,33 @@ alter the Makefile and change the `FFLAGS` parameter to:
 FFLAGS = -Wall -Wl,-rpath=./paho.mqtt.c/build/src/ -std=2008
 ```
 
-## Build the Fortran interface
-Clone the repository with Git and use GNU make to build the Fortran interface:
+## Build the Library
+Clone the repository with Git and use GNU make to build the Fortran interfaces:
 
 ```
 $ git clone https://github.com/interkosmos/fortran-paho
 $ cd fortran-paho/
-$ make paho
+$ make
 ```
 
 You can override the default compiler (`gfortran`) by passing the `FC`
 argument, for example:
 
 ```
-$ make paho FC=gfortran9
+$ make FC=gfortran10
 ```
 
-Or compile the interface manually:
+Or, compile the source code manually:
 
 ```
 $ gfortran -c src/paho.f90
 ```
 
-Add `-lpaho-mqtt3c` to your `LDLIBS` to link Eclipse Paho, for instance:
+Add `libfortran-paho.a -lpaho-mqtt3c` to your `LDLIBS` to link Eclipse Paho, for
+instance:
 
 ```
-$ gfortran -I/usr/local/include/ -L/usr/local/lib/ -o example example.f90 paho.o -lpaho-mqtt3c
+$ gfortran -I/usr/local/include/ -L/usr/local/lib/ -o example example.f90 libfortran-paho.a -lpaho-mqtt3c
 ```
 
 ## Examples
