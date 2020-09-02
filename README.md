@@ -57,7 +57,8 @@ Add `libfortran-paho.a -lpaho-mqtt3c` to your `LDLIBS` to link Eclipse Paho, for
 instance:
 
 ```
-$ gfortran -I/usr/local/include/ -L/usr/local/lib/ -o example example.f90 libfortran-paho.a -lpaho-mqtt3c
+$ gfortran -I/usr/local/include/ -L/usr/local/lib/ \
+  -o example example.f90 libfortran-paho.a -lpaho-mqtt3c
 ```
 
 ## Examples
