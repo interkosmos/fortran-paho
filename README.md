@@ -12,7 +12,6 @@ link the library. On FreeBSD, just install the package `libpaho-mqtt3`:
 
 ```
 # pkg install net/libpaho-mqtt3
-
 ```
 
 Alternatively, clone the [repository](https://github.com/eclipse/paho.mqtt.c)
